@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const validator = require("validator");
+const bcrypt = require("bcrypt");
 
 const userSchema = new mongoose.Schema(
   {
@@ -57,9 +59,10 @@ const userSchema = new mongoose.Schema(
     },
     photoUrl: {
       type: String,
-      default: "",
+      default:
+        "https://img.freepik.com/free-vector/user-blue-gradient_78370-4692.jpg?t=st=1740779693~exp=1740783293~hmac=3ffc11733917c931bddeec957e8fa649e6a1590282b3210d816ccbf54dab2e94&w=900",
       validate(value) {
-        if (!validator.isUrl(value)) {
+        if (!validator.isURL(value)) {
           throw new Error("Invalid Url :" + value);
         }
       },
