@@ -58,11 +58,8 @@ requestRouter.post(
     try {
       const loggedInUser = req.user;
       const { status, requestId } = req.params;
-      console.log("1");
       const allowedStatuses = ["accepted", "rejected"];
-      console.log("2");
       if (!allowedStatuses.includes(status)) {
-        console.log("3");
         throw new Error("Invalid status type: " + status);
       }
 
@@ -79,12 +76,9 @@ requestRouter.post(
           success: false,
         });
       }
-      console.log("5");
       connectionRequest.status = status;
-      console.log("6");
 
       const data = await connectionRequest.save();
-      console.log("7");
 
       res.json({ message: "Connection Request" + status, data });
     } catch (err) {

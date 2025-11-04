@@ -6,7 +6,56 @@ const User = require("../models/user");
 
 const USER_SAFE_DATA = "";
 
-userRouter.get("/user/requests/received", userAuth, async (req, res) => {});
+userRouter.get("/user/request/received", userAuth, async (req, res) => {
+  try {
+    const loggedInUser = req.user;
+    const request = await ConnectionRequestModel.find({
+      toUserId: loggedInUser._id,
+      status: "interested",
+    }).populate("fromUserId", "firstName lastName gender skills");
+
+    if (!request) {
+      res.status(404).send("No request found!");
+    }
+
+    res.json({ data: request });
+  } catch (err) {
+    res.status(400).send("Error : " + err.message);
+  }
+});
+userRouter.get("/user/connections", userAuth, async (req, res) => {
+  const loggedInUser = req.user;
+  try {
+    const connections = await ConnectionRequestModel.find({
+      $or: [
+        { fromUserId: loggedInUser._id, status: "accepted" },
+        { toUserId: loggedInUser._id, status: "accepted" },
+      ],
+    })
+      .populate(
+        "fromUserId",
+        "firstName LastName gender skills  photoUrl about"
+      )
+      .populate("toUserId", "firstName LastName gender skills  photoUrl about");
+
+    // console.log(connections);
+    if (!connections) {
+      res.status(404).send("No connections found");
+    }
+
+    const data = connections.map((item) => {
+      if (item.fromUserId._id.toString() === loggedInUser._id.toString()) {
+        return item.toUserId;
+      } else {
+        return item.fromUserId;
+      }
+    });
+
+    res.send(data);
+  } catch (err) {
+    res.status(400).send("Error : " + err.message);
+  }
+});
 
 userRouter.get("/feed", userAuth, async (req, res) => {
   try {
@@ -31,7 +80,7 @@ userRouter.get("/feed", userAuth, async (req, res) => {
         { _id: { $ne: loggedInUser._id } },
       ],
     })
-      .select("firstName lastName skills gender")
+      .select("firstName lastName skills gender photoUrl about")
       .skip(skip)
       .limit(limit);
 
