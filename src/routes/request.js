@@ -23,7 +23,10 @@ requestRouter.post(
 
       const allowedStatuses = ["ignored", "interested"];
       if (!allowedStatuses.includes(status)) {
-        throw new Error("Invalid status type: " + status);
+        return res.status(400).json({
+          message: "Invalid status type: " + status,
+          success: false,
+        });
       }
 
       const existingConnectionRequest = await ConnectionRequestModel.findOne({
@@ -33,7 +36,10 @@ requestRouter.post(
         ],
       });
       if (existingConnectionRequest) {
-        throw new Error("Request already sent");
+        return res.status(400).json({
+          message: "Request already sent",
+          success: false,
+        });
       }
 
       const connectionRequest = new ConnectionRequestModel({
@@ -43,11 +49,15 @@ requestRouter.post(
       });
 
       const data = await connectionRequest.save();
+      
+      res.json({
+        message: req.user.firstName + " sent the connection request",
+        success: true,
+        data,
+      });
     } catch (err) {
-      res.status(400).send("Error:" + err.message);
+      res.status(400).send("Error: " + err.message);
     }
-
-    res.send(fromUserId.firstName + "sent the connection request");
   }
 );
 
