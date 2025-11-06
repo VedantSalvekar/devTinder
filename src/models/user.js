@@ -70,6 +70,18 @@ const userSchema = new mongoose.Schema(
     skills: {
       type: [String],
     },
+    isPremium: {
+      type: Boolean,
+      default: false,
+    },
+    premiumPlan: {
+      type: String,
+      enum: ["silver", "gold", null],
+      default: null,
+    },
+    premiumPurchasedAt: {
+      type: Date,
+    },
   },
   {
     timestamps: true,
