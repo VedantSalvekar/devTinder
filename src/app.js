@@ -3,6 +3,8 @@ const connectDB = require("./config/database");
 const app = express();
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
+const initializeSocket = require("./utils/socket");
+const http = require("http");
 
 app.use(
   cors({
@@ -27,10 +29,12 @@ app.use("/", requestRouter);
 app.use("/", userRouter);
 app.use("/", paymentRouter);
 
+const server = http.createServer(app);
+initializeSocket(server);
 connectDB()
   .then(() => {
     console.log("DB connection successful");
-    app.listen(7777, () => {
+    server.listen(7777, () => {
       console.log("Server is listening on port 7777...");
     });
   })
