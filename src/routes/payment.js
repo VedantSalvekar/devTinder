@@ -9,12 +9,12 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 const PLANS = {
   silver: {
-    name: "DevTinder Silver",
+    name: "GitTogether Silver",
     price: 999,
     description: "Silver Membership",
   },
   gold: {
-    name: "DevTinder Gold",
+    name: "GitTogether Gold",
     price: 1999,
     description: "Gold Membership",
   },
